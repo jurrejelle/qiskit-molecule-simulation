@@ -1,6 +1,7 @@
 import json
 import pprint
 filename = "output_h3.json"
+
 avg_ansatzes = {}
 avg_optimizers = {}
 avg_mappings = {}
@@ -13,9 +14,9 @@ qubits = {}
 with open(filename, "r") as f:
     output = json.loads(f.read())
 
-#actual = -1.851561750727
 actual = sum([item['eigenvalue'] for item in output])/len(output)
 print(len(output))
+
 # Aggregate data
 for item in output:
     ident = [item["mapper"], item["ansatz"], item["optimizer"]]
@@ -60,20 +61,16 @@ for optimizer in avg_optimizers:
     avg_optimizers[optimizer] /= sum([1 for item in output if item['optimizer'] == optimizer])
     mae_optimizers[optimizer] /= sum([1 for item in output if item['optimizer'] == optimizer])
 
+print("f{'='*20}Average times per system{'='*20}")
 pprint.pprint(avg_ansatzes)
 pprint.pprint(avg_optimizers)
 pprint.pprint(avg_mappings)
 
+print("f{'='*20}Mean Absolute Error per system{'='*20}")
 pprint.pprint(mae_ansatzes)
 pprint.pprint(mae_optimizers)
 pprint.pprint(mae_mappings)
 
+
 for item in qubits:
     print(f"{item}: {len(qubits[item])}")
-print(qubits[2])
-
-for item in output:
-    if item["ansatz"] == 'UCCSD':
-        if item['mapper'] == 'BravyiKitaevMapper':
-            if item['optimizer'] == 'AQGD':
-                print(item)

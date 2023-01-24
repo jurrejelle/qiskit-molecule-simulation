@@ -31,10 +31,13 @@ driver = PySCFDriver(
 )
 problem: ElectronicStructureProblem = driver.run()
 data = ""
+
+
 def callback_fun(count, parameters, mean, metadata):
     global data
     curr = f"Iteration: {count}\nParameters: {parameters}\nMean: {mean}\n\n"
     data += curr
+
 
 vqe_solver = VQEUCCFactory(Estimator(), UCCSD(), SLSQP())
 converter = QubitConverter(ParityMapper())

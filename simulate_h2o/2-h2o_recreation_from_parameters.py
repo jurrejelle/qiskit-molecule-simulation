@@ -15,14 +15,21 @@ from qiskit_nature.second_q.problems import ElectronicStructureProblem
 from qiskit_nature.units import DistanceUnit
 from qiskit_nature.second_q.drivers import PySCFDriver
 
-params = [2.4880008478017135e-08,  -3.495203492544701e-08, -0.11294958541888067]
-# Once h2osolver.py runs, import params into here and change it to h2o
+# Params for h2 if you haven't simulated h2o yet
+# Swap out the atom to h2 as well if you want to use these
+
+#params = [2.4880008478017135e-08,  -3.495203492544701e-08, -0.11294958541888067]
+
+with open("output.txt", "r") as f:
+    output = json.loads(f.read())
+
+params = [output["optimal_parameters"][f"t[{x}]"] for x in range(0, len(output["optimal_parameters"]))]
 
 H2  = "H 0 0 0; H 0 0 0.740848"
 H2O = "H 0.75754079778 0.58707963658 0; O 0 0 0; H -0.75754079778 0.58707963658 0"
 
 driver = PySCFDriver(
-    atom=H2,
+    atom=H2O,
     basis="sto3g",
     charge=0,
     spin=0,
@@ -41,4 +48,5 @@ ucc.num_spatial_orbitals = problem.num_spatial_orbitals
 
 bound_params = dict(zip(ucc.parameters, params))
 ucc.assign_parameters(bound_params, inplace=True)
-print(ucc.qasm())
+with open("output_qasm.txt", "w") as f:
+    f.write(ucc.decompose(reps=100).qasm())
