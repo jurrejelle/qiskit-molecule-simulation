@@ -1,6 +1,6 @@
 import json
 import pprint
-filename = "output_h3.json"
+filename = "output_h2.json"
 
 avg_ansatzes = {}
 avg_optimizers = {}
@@ -61,12 +61,12 @@ for optimizer in avg_optimizers:
     avg_optimizers[optimizer] /= sum([1 for item in output if item['optimizer'] == optimizer])
     mae_optimizers[optimizer] /= sum([1 for item in output if item['optimizer'] == optimizer])
 
-print("f{'='*20}Average times per system{'='*20}")
+print(f"{'='*20}Average times per system{'='*20}")
 pprint.pprint(avg_ansatzes)
 pprint.pprint(avg_optimizers)
 pprint.pprint(avg_mappings)
 
-print("f{'='*20}Mean Absolute Error per system{'='*20}")
+print(f"{'='*20}Mean Absolute Error per system{'='*20}")
 pprint.pprint(mae_ansatzes)
 pprint.pprint(mae_optimizers)
 pprint.pprint(mae_mappings)

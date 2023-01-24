@@ -56,9 +56,12 @@ HF = "H 0 0 0; F 0 0 0.91"
 HLi  = "H 0 0 0; Li 0 0 2"
 CO2 = "O 0 0 0; C 0 0 1.158898; O 0 0 2.317796",
 H2O = "H 0.75754079778 0.58707963658 0; O 0 0 0; H -0.75754079778 0.58707963658 0"
-outputfile = "output_h3.json"
+outputfile = "output_h2.json"
 if outputfile not in os.listdir():
     with open(outputfile, "w") as f:
+        f.write("[]")
+if "not_working.json" not in os.listdir():
+    with open("not_working.json", "w") as f:
         f.write("[]")
 
 
@@ -80,7 +83,7 @@ for mapper in mappers:
             def callback_fun(count, parameters, mean, metadata):
                 global beforetime, ident
                 newtime = time.time()
-                if newtime - beforetime > 60:
+                if newtime - beforetime > 600:
                     print(ident+"Took too long")
                     raise Exception("took too long")
 #                print(f"Iteration: {count}\nParameters: {parameters}\nMean: {mean}\n\n")

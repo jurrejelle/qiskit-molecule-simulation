@@ -1,9 +1,8 @@
-from qiskit.algorithms.minimum_eigensolvers import VQE, NumPyMinimumEigensolver, VQEResult
 from qiskit.algorithms.optimizers import SLSQP
 from qiskit.primitives import Estimator
 from qiskit_nature.second_q.algorithms import VQEUCCFactory, GroundStateEigensolver
 from qiskit_nature.second_q.circuit.library import *
-from qiskit_nature.second_q.mappers import QubitConverter, JordanWignerMapper, BravyiKitaevMapper, ParityMapper
+from qiskit_nature.second_q.mappers import QubitConverter, ParityMapper
 from qiskit_nature.second_q.problems import ElectronicStructureProblem
 from qiskit_nature.units import DistanceUnit
 from qiskit_nature.second_q.drivers import PySCFDriver
@@ -34,8 +33,6 @@ def callback_fun(count, parameters, mean, metadata):
 
 vqe_solver = VQEUCCFactory(Estimator(), UCCSD(), SLSQP(), callback=callback_fun)
 converter = QubitConverter(ParityMapper())
-
-numpy_solver = NumPyMinimumEigensolver()
 
 calc = GroundStateEigensolver(converter, vqe_solver)
 res = calc.solve(problem)

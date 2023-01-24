@@ -5,7 +5,6 @@ from qiskit.providers.fake_provider import FakeCairo
 # However, since we don't have access to a real quantum computer with >14 qubits, we're using IBM Cairo
 # See: https://quantum-computing.ibm.com/services/resources?tab=systems&system=ibm_cairo
 backend = FakeCairo()
-
 gate_times = {}
 gate_errors = {}
 unit = ""
@@ -20,6 +19,24 @@ for gate in backend.properties().gates:
             unit = parameter.unit
 
 print(gate_times)
+print(gate_errors)
+
+T1s = []
+T2s = []
+T1_unit = ""
+T2_unit = ""
+for index, qubit in enumerate(backend.properties().qubits):
+    for parameter in qubit:
+        if(parameter.name == 'T1'):
+            T1s.append(parameter.value)
+            T1_unit = parameter.unit
+        if(parameter.name == 'T2'):
+            T2s.append(parameter.value)
+            T2_unit = parameter.unit
+
+print(f"Average T1: {sum(T1s)/len(T1s)}{T1_unit}")
+print(f"Average T2: {sum(T2s)/len(T1s)}{T2_unit}")
+
 
 # Transpile the circuit to be as it would run on Cairo
 qc = QuantumCircuit.from_qasm_file("output_qasm.txt")

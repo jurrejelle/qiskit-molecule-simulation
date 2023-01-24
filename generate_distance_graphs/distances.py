@@ -32,12 +32,12 @@ def genh3string(dist):
     return "H 0 0 0; H 0 0 {:.4f}; H 0 {:.4f} {:.4f}".format(dist,
                                                              dist * math.sin(math.pi/3),
                                                              dist * math.cos(math.pi/3))
-MOLECULE = "h2o"
+MOLECULE = "h2"
 lines = []
 
 if MOLECULE == "h2":
-    start = 0.5
-    end = 1.7
+    start = 0.35
+    end = 1.70
     step = 0.01
 elif MOLECULE == "h3":
     start = 0.1
@@ -57,7 +57,7 @@ steps = int((end-start)/step) + 1
 
 for dist in np.linspace(start, end, steps):
     energies = []
-    for iterations in range(0, 2):
+    for iterations in range(0, 4):
         driver = None
         if MOLECULE == "h3":
 
@@ -110,7 +110,7 @@ for dist in np.linspace(start, end, steps):
         res = calc.solve(problem)
         energies.append(problem.interpret(res).total_energies[0].real)
 
-    line = f"{dist:.3f}: {min(energies)}".replace(".",",")
+    line = f"{dist:.3f}, {min(energies)}"
     print(line)
     lines.append(line)
 
