@@ -1,7 +1,13 @@
 import json
 import pprint
-filename = "output_h2.json"
+from qiskit.algorithms.minimum_eigensolvers import NumPyMinimumEigensolver
+from qiskit_nature.second_q.algorithms import GroundStateEigensolver
+from qiskit_nature.second_q.mappers import QubitConverter, ParityMapper
+from qiskit_nature.units import DistanceUnit
+from qiskit_nature.second_q.drivers import PySCFDriver
 
+
+# Setup dicts
 avg_ansatzes = {}
 avg_optimizers = {}
 avg_mappings = {}
@@ -11,10 +17,35 @@ mae_optimizers = {}
 mae_mappings = {}
 
 qubits = {}
+
+print_type = "pretty_print" # latex or pretty_print
+
+# Calculate the actual eigenvalue to calculate the Mean Absolute Error
+driver = PySCFDriver(
+    atom="H 0 0 0; H 0 0 0.740848",
+    basis="sto3g",
+    charge=0,
+    spin=0,
+    max_memory=30760,
+    unit=DistanceUnit.ANGSTROM,
+)
+problem = driver.run()
+
+
+converter = QubitConverter(ParityMapper())
+numpy_solver = NumPyMinimumEigensolver()
+
+calc = GroundStateEigensolver(converter, numpy_solver)
+res = calc.solve(problem)
+actual = res.raw_result.eigenvalue
+
+
+
+filename = "output_h2.json"
+
 with open(filename, "r") as f:
     output = json.loads(f.read())
 
-actual = sum([item['eigenvalue'] for item in output])/len(output)
 print(len(output))
 
 # Aggregate data
@@ -61,15 +92,23 @@ for optimizer in avg_optimizers:
     avg_optimizers[optimizer] /= sum([1 for item in output if item['optimizer'] == optimizer])
     mae_optimizers[optimizer] /= sum([1 for item in output if item['optimizer'] == optimizer])
 
+def print_dict(mydict):
+    if print_type == "latex":
+        for key, value in sorted(mydict.items(), key=lambda x: x[1]):
+            print(f"{key} & {value:10f} \\\\".replace("_","\\_"))
+    elif print_type == "pretty_print":
+        pprint.pprint(mydict)
+    print("="*40)
+
 print(f"{'='*20}Average times per system{'='*20}")
-pprint.pprint(avg_ansatzes)
-pprint.pprint(avg_optimizers)
-pprint.pprint(avg_mappings)
+print_dict(avg_ansatzes)
+print_dict(avg_optimizers)
+print_dict(avg_mappings)
 
 print(f"{'='*20}Mean Absolute Error per system{'='*20}")
-pprint.pprint(mae_ansatzes)
-pprint.pprint(mae_optimizers)
-pprint.pprint(mae_mappings)
+print_dict(mae_ansatzes)
+print_dict(mae_optimizers)
+print_dict(mae_mappings)
 
 
 for item in qubits:
